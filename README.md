@@ -65,6 +65,7 @@
 
 ## 3.Vue框架
 
+### 页面布局结构
     header+main+footer
 
 
@@ -92,3 +93,18 @@ plugins: [
   // ConfigItem
   babel.createConfigItem(require("@babel/plugin-transform-spread")),
 ],
+
+#### home页面
+
+##### 新闻页
+
+如何分页？点击加载按钮刷新更多新闻list
+
+- 新闻详情页
+
+  发表评论步骤
+  + 上传用户id 和当前内容
+  + 1.需要获得当前用户名 2.即将发表的内容 3.发表时间 4.第几楼
+  + 手动拼接成字符串push到当前commonts-list中 if 用户名隐藏 则匿名发表
+  + 重新渲染comments-list
+  + 清楚msg
