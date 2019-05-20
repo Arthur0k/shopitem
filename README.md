@@ -108,3 +108,23 @@ plugins: [
   + 手动拼接成字符串push到当前commonts-list中 if 用户名隐藏 则匿名发表
   + 重新渲染comments-list
   + 清楚msg
+
+#### vip页面
+
+坑： 如何同时移动图片和li元素 解决方案：减少层级  或者  层级同步
+坑2： element.style 添加important 又变成原来的问题
+坑3： HTMLCollection 有自己的api
+坑4：本地数据渲染拿不到Dom对象  方案一 mouted: $nextTick(function() {})  二：beforeMount:拿数据,mounted:拿dom
+坑5：异步数据渲染拿不到Dom对象 方案一 hook函数 updated
+
+禁止缩放
+window.addEventListener(
+    "touchmove",
+    function(event) {
+        if(event.scale !== 1) {
+            event.preventDefault();
+        }
+    }, {
+        passive: false
+    }
+);

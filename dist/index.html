@@ -17,6 +17,18 @@
        flex-direction: column;
      }
     </style>
+    <script>
+      window.addEventListener(
+      "touchmove",
+      function(event) {
+      if(event.scale !== 1) {
+      event.preventDefault();
+      }
+      }, {
+      passive: false
+      }
+      );
+    </script>
   </head>
   <body>
     <div id="app">

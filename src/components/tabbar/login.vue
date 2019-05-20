@@ -17,37 +17,37 @@
       <a href="#">注册</a>
     </div>
     <div class="other-way">
-        <a href="#"><img alt="qq" src="../../img/qq.jpeg"/></a>
-        <a href="#"><img alt="weixin" src="../../img/weixin.jpeg"/></a>
-        <div>
-          其他登录方式
-        </div>
+      <a href="#"><img alt="qq" src="../../img/qq.jpeg"/></a>
+      <a href="#"><img alt="weixin" src="../../img/weixin.jpeg"/></a>
+      <div>
+        其他登录方式
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-  export default {
-  data() {
-  return { msg: "haha" }
-  },
-    methods: {
-      transf() {
-        if (this.$refs.psw.type === 'password') {
-          this.$refs.psw.type = 'text';
-        } else {
-          this.$refs.psw.type = 'password';
-        }
-      },
-    },
-  watch: {
-  $route(to, from) {
-  console.log(this.$route)
-  console.log(this.$router)
-  this.$router.push({name: 'shop'})
-  }
-  }
-  }
+ export default {
+   data() {
+     return { msg: "haha" }
+   },
+   methods: {
+     transf() {
+       if (this.$refs.psw.type === 'password') {
+         this.$refs.psw.type = 'text';
+       } else {
+         this.$refs.psw.type = 'password';
+       }
+     },
+   },
+   watch: {
+     $route(to, from) {
+       console.log(this.$route)
+       console.log(this.$router)
+       this.$router.push({name: 'shop'})
+     }
+   }
+ }
 </script>
 
 <style lang="sass">

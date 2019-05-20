@@ -5,9 +5,9 @@
   <a href="javascript;;" @click.prevent="goBack" id="back">&lt;</a>
   </div>
 
-  <transition name="queque" mode="out-in">
+  <!-- <transition name="queque" mode="out-in"> -->
 <router-view></router-view>
-  </transition>
+<!-- </transition> -->
 
 <nav class="mui-bar mui-bar-tab">
     <router-link to="/home" class="mui-tab-item">
@@ -15,16 +15,16 @@
       <span class="mui-tab-label">首页</span>
     </router-link>
     <router-link to="/vip"class="mui-tab-item">
-      <span class="mui-icon mui-icon-contact"></span>
-      <span class="mui-tab-label">会员</span>
+      <span class="mui-icon mui-icon-search"></span>
+      <span class="mui-tab-label">探索</span>
     </router-link>
     <router-link to="/shopcart" class="mui-tab-item">
-      <span class="mui-icon iconfont icon-gouwuche1"><span class="mui-badge">{{ sumCount }}</span></span>
+      <span  class="mui-icon iconfont icon-gouwuche1"><span id="badge" class="mui-badge">{{ sumCount }}</span></span>
       <span class="mui-tab-label">购物车</span>
     </router-link>
     <router-link :to="{name: 'login'}" class="mui-tab-item">
-      <span class="mui-icon mui-icon-search"></span>
-      <span class="mui-tab-label">搜索</span>
+      <span class="mui-icon mui-icon-contact"></span>
+      <span class="mui-tab-label">会员</span>
     </router-link>
 </nav>
 </div>
@@ -46,6 +46,9 @@
 </script>
 
 <style lang="sass">
+ html, html {
+   overflow: hidden;
+   height: 100%;
 body {
   width: 100%;
   padding: 40px 0 50px;
@@ -77,4 +80,5 @@ body {
 .queque-leave-to {
   transform: translateX(-375px)
 }
+ }
 </style>

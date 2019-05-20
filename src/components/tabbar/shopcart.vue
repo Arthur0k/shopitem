@@ -31,7 +31,7 @@
 </template>
 
 <script>
- import numbox from '../goodsInfo_numbox.vue';
+ import numbox from '../public/numbox.vue';
 
  export default {
    data() {
@@ -64,7 +64,7 @@
      getSelected() {
        let o = {};
        $store.state.car.forEach((item) => {
-o[item.id] = this
+         o[item.id] = this
        })
      },
      select(id, val) {

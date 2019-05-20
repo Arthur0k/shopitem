@@ -1,5 +1,5 @@
-import Animate from './.#animate';
-import Tool from './tool';
+import Animate from './explore/animate';
+import Tool from './explore/tool';
 
 // 未解决的坑：1同时只能操作一个目标2目标移动时不能进行其他操作 跳转除外
 // 待实现旋转动画和下拉菜单
@@ -20,7 +20,6 @@ import Tool from './tool';
   消失意味者当前对象从oldL被push到数组newL中 同时记录移出时的方向
   当且仅当点击back按钮时 前一对象才按其记录的反方向返回原位(即从newL中unshift到oldL)
 */
-
 function copyProperties(target, source) {
   for (let key of Reflect.ownKeys(source)) {
     if (key !== 'constructor' && key !== 'prototype' && key !== 'name') {
@@ -42,16 +41,21 @@ function mix(...mixins) {
 }
 
 class Explore extends mix(Animate, Tool) {
-  constructor(oldL) {
+  constructor() {
     super();
-    this.oldL = oldL;
-    this.newL = [];
+    this.startX = null;
+    this.startY = null;
+    this.start = null;
   }
 
-  init() {
+  init(oldL) {
+    this.oldL = oldL;
+    this.newL = [];
+    const self = this;
     this.oldL.forEach((item) => {
-      item.addEventListener('touchstart', this.handleStart, false);
-      item.addEventListener('touchcancel', this.handleCancel, false);
+      item.addEventListener('touchstart', this.handleStart.bind(self), false);
+      item.addEventListener('touchmove', this.handleMove.bind(self), false);
+      item.addEventListener('touchend', this.handleEnd.bind(self), false);
     });
   }
 
@@ -68,23 +72,20 @@ class Explore extends mix(Animate, Tool) {
     // 目标对象的初始left top
     this.startLeft = e.target.offsetLeft;
     this.startTop = e.target.offsetTop;
-    console.log('初始startL,startT: ', this.startLeft, this.startTop);
+    // console.log(this.startLeft, this.startTop);
     /* console.log(`starX: ${startX}, startY:${startY}`) */
     // 触摸点距离边框的width and height;
-    this.innerW = this.startX - this.point.target.offsetLeft;
-    this.innerH = this.startY - this.point.target.offsetTop;
-    this.point.target.addEventListener('touchmove', this.handleMove, false);
-    this.point.target.addEventListener('touchend', this.handleEnd, false);
+    this.innerW = this.startX - e.target.offsetLeft;
+    this.innerH = this.startY - e.target.offsetTop;
   }
 
   handleMove(e) {
     e.preventDefault();
-    e.target.style.top = this.point.clientY - this.innerH + 'px';
-    e.target.style.left = this.point.clientX - this.innerW + 'px';
+    e.target.style.top = e.touches[0].clientY - this.innerH + 'px';
+    e.target.style.left = e.touches[0].clientX - this.innerW + 'px';
   }
 
   handleEnd(e) {
-    console.log('手指离开');
     e.preventDefault();
     const end = Date.now();
     // 手指离开屏幕时点的坐标
@@ -94,14 +95,13 @@ class Explore extends mix(Animate, Tool) {
     // 从触摸到离开，手指滑动的距离
     const x = endX - this.startX;
     const y = endY - this.startY;
-    /* console.log(x, y) */
 
     // 手指离开屏幕,目标对象的left,top
-    let left = e.target.offsetLeft;
-    let top = e.target.offsetTop;
+    this.left = e.target.offsetLeft;
+    this.top = e.target.offsetTop;
 
     // 角度值
-    let angle = this.getAngle(x, y);
+    const angle = this.getAngle(x, y);
 
     // // 方向 右下1 左下2 左上3 右上4
     // const position = getPosition(angle);
@@ -113,55 +113,47 @@ class Explore extends mix(Animate, Tool) {
     const Vx = Math.cos(angle);
     const Vy = Math.sin(angle);
     // 移出屏幕时的距离（可调）
-    const dx = Vx * xMax;
-    const dy = Vy * yMax;
+    const dx = Vx * xMax + this.left;
+    const dy = Vy * yMax + this.top;
 
     // 一秒钟移动的像素
     // 从触摸到离开花费的总时长
     const timeSpent = end - this.start;
     const rateX = Math.abs(x) / timeSpent;
     const rateY = Math.abs(y) / timeSpent;
-    if (this.isFling(rateX, rateY)) {
+
+    if ((this.isFling(rateX, rateY)) || (Math.abs(x) >= 260 || Math.abs(y) >= 660)) {
       // 判断手势是否是fling;
       // 沿当前方向移除屏幕至消失
+      // this.move(dx, dy, this.oldL[0]);
+      this.move(dx, dy, this.oldL[this.oldL.length-1]);
+      this.newL.push(this.oldL.pop());
+      // this.newL.push(this.oldL.shift());
+      this.e = e;
 
-      // 待封装
-      left = left + dx;
-      top = top + dy;
-      e.target.style.left = `${left}px`;
-      e.target.style.top = `${top}px`;
-      e.target.style.transition = 'all 0.4s ease';
-      setTimeout(() => {
-        e.target.style.transition = '';
-      }, 400);
-      this.newL.push(this.oldL.shift());
+    } else {
+      // 返回原来位置
+      // this.move(this.startLeft, this.startTop, this.oldL[0]);
+      this.move(188, 81, this.oldL[this.oldL.length-1]);
+    }
+  }
 
-      console.log('noFling')
-      // 手指离开屏幕时的坐标相对初始坐标超过一定距离,目标对象沿滑动的方向移动直到消失
-      if (Math.abs(x) >= 260 || Math.abs(y) >= 660) {
+  back() {
+    if (this.newL.length > 0) {
+      let target = this.newL.pop();
+      // let target = this.newL.shift();
+      this.move(188, 81, target);
+      this.oldL.push(target);
+    }
+  }
 
-        left = left + dx;
-        top = top + dy;
-        e.target.style.left = `${left}px`;
-        e.target.style.top = `${top}px`;
-        e.target.style.transition = 'all 0.3s ease';
-        setTimeout(() => {
-          e.target.style.transition = '';
-        }, 300);
-        this.newL.push(this.oldL.shift());
-
-      } else {
-        // 返回原来位置
-        left = this.startLeft;
-        top = this.startTop;
-        e.target.style.left = `${left}px`;
-        e.target.style.top = `${top}px`;
-        // 返回动画 可修改成添加类
-        e.target.style.transition = 'all 0.3s ease';
-        setTimeout(() => {
-          e.target.style.transition = '';
-        }, 300);
-      }
+  forward() {
+    const xMax = document.body.clientWidth;
+    if (this.oldL.length > 0) {
+      // let target = this.oldL.shift();
+      let target = this.oldL.pop();
+      this.newL.push(target);
+      this.move(-xMax, 0, target);
     }
   }
 }

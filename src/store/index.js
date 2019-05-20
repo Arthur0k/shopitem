@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
-var car = JSON.parse(localStorage.getItem('car') || '[]');
+let car = JSON.parse(localStorage.getItem('car') || '[]');
 const store = new Vuex.Store({
   state: {
     car: car,
@@ -34,10 +34,6 @@ const store = new Vuex.Store({
       return o;
     },
     getTotalAmountAndPrice(state) {
-      // let o = {
-      //   selected: 0,
-      //   totalPrice: 0,
-      // }
       let selected = 0;
       let totalPrice = 0;
       state.car.forEach((item) => {
@@ -61,7 +57,6 @@ const store = new Vuex.Store({
       });
       if (!flag) {
         state.car.push(goodsInfo);
-        console.log(`push---state.car--${state.car}`);
       }
       localStorage.setItem('car', JSON.stringify(state.car));
     },
@@ -69,7 +64,6 @@ const store = new Vuex.Store({
       state.car.some((item) => {
         if (item.id == goodsInfo.id) {
           item.count = parseInt(goodsInfo.count);
-          console.log('update');
         }
       });
       localStorage.setItem('car', JSON.stringify(state.car));

@@ -1,6 +1,13 @@
 <template>
   <div class="goodsInfo-container">
-    <slider></slider>
+    <transition
+      @before-enter="beforeEnter"
+      @enter="enter"
+      @after-enter="afterEnter"
+    >
+      <div ref="ball" class="ball" v-show="flag"></div>
+    </transition>
+    <slider :imgL="computerImgs"></slider>
     <div class="product-intro">
       <h3>{{ goodsInfo.title }}</h3>
       <hr/>
@@ -15,7 +22,7 @@
         </div>
         <div class="choose-btn">
           <mt-button id="purchase" @click="purchase" size="small" type="primary">立即购买</mt-button>
-          <mt-button @click="addToCart" size="small" type="danger">加入购物车</mt-button>
+          <mt-button @click="addToCart" ref="spc" size="small" type="danger">加入购物车</mt-button>
         </div>
       </div>
 
@@ -46,15 +53,14 @@
           操作系统： Android
         </p>
       </div>
-
     </div>
 
   </div>
 </template>
 
 <script>
- import slider from '../slider.vue';
- import numbox from '../goodsInfo_numbox.vue';
+ import slider from '../../public/slider.vue';
+ import numbox from '../../public/numbox.vue';
 
  export default {
    data() {
@@ -62,13 +68,17 @@
        selectedCount: 1,
        id: this.$route.params.goodid,
        goodsInfo: {},
+       computerImgs: [],
+       flag: false,
      };
    },
    created() {
      this.getGoodsDesc();
+     this.getComputer();
    },
    methods: {
-     addToCart() {
+     addToCart(e) {
+       this.flag = !this.flag;
        let goodsInfo = {
          id: parseInt(this.id),
          count: this.selectedCount,
@@ -76,6 +86,24 @@
          selected: true,
        };
        this.$store.commit('addToCart', goodsInfo);
+     },
+     beforeEnter(el) {
+       el.style.transform = 'translate(0, 0)'
+     },
+     enter(el, done) {
+       el.offsetWidth;
+       const badgepos = document.getElementById('badge').getBoundingClientRect();
+       const ballpos = this.$refs.ball.getBoundingClientRect()
+       let xDist = badgepos.left - ballpos.left;
+       let yDist = badgepos.top - ballpos.top;
+       /* console.log(xDist, yDist) */
+       el.style.transform = `translate(${xDist}px, ${yDist}px)`
+       /* el.style.transform = `translate(80px, 243px)` */
+       el.style.transition = 'all .4s cubic-bezier(.39,-0.23,1,.68)'
+       done()
+     },
+     afterEnter(el) {
+       this.flag = !this.flag;
      },
      getNum(num) {
        this.selectedCount = parseInt(num);
@@ -90,16 +118,34 @@
          }
        })
      },
+     getComputer() {
+       this.$http.get('/api/getcomputer').then((response)=>{
+         if (response.body.status === 0) {
+           this.computerImgs = response.body.message;
+         }
+       })
+     },
    },
    components: {
      slider,
      numbox,
-   }
+   },
  }
 </script>
 
 <style lang="sass" scoped>
  .goodsInfo-container {
+   .ball {
+     width: 15px;
+     height: 15px;
+     border-radius: 50%;
+     background-color: #f00;
+     position: absolute;
+     z-index: 20;
+     left: 148px;
+     top: 350px;
+     transform: translate(0, 0);
+   }
    background-color: #eaece9;
    padding: 10px;
    .product-intro {

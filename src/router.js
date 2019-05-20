@@ -2,15 +2,15 @@ import VueRouter from 'vue-router';
 // 引入组件;
 import home from './components/tabbar/home.vue';
 import login from './components/tabbar/login.vue';
-import vip from './components/tabbar/vip.vue';
+import explore from './components/tabbar/explore.vue';
 import shopcart from './components/tabbar/shopcart.vue';
-import newslist from './components/home/newslist.vue';
-import newsInfo from './components/home/newsInfo.vue';
-import share from './components/home/share.vue';
-import shareInfo from './components/home/shareInfo.vue';
-import comment from './components/comment.vue';
-import goodlist from './components/home/goodlist.vue';
-import goodsInfo from './components/home/goodsInfo.vue';
+import newslist from './components/home/news/newslist.vue';
+import newsInfo from './components/home/news/newsInfo.vue';
+import share from './components/home/share/share.vue';
+import shareInfo from './components/home/share/shareInfo.vue';
+import comment from './components/public/comment.vue';
+import goodlist from './components/home/goods/goodlist.vue';
+import goodsInfo from './components/home/goods/goodsInfo.vue';
 
 const router = new VueRouter({
   // mode: 'history',
@@ -30,7 +30,7 @@ const router = new VueRouter({
     },
     { path: '/login', name: 'login', component: login },
     { path: '/shopcart', name: 'shop', component: shopcart },
-    { path: '/vip', component: vip },
+    { path: '/vip', component: explore },
   ],
 });
 

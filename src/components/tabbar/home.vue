@@ -1,6 +1,6 @@
 <template>
   <div class="home-container">
-    <slider></slider>
+    <slider :imgL="imgs"></slider>
 
     <ul class="navigation-container">
       <router-link to="/home/newslist" tag="li"><a href="#"><img alt="" src="../../img/menu1.png" /></a><span>新闻资讯</span></router-link>
@@ -14,12 +14,24 @@
 </template>
 
 <script>
- import slider from '../slider.vue';
+ import slider from '../public/slider.vue';
  export default {
    data: function() {
-     return {};
+     return {
+       imgs: [],
+     };
+   },
+   created() {
+     this.getImgs();
    },
    methods: {
+     getImgs() {
+       this.$http.get('/api/getimgs').then((response) => {
+         if (response.body.status === 0) {
+           this.imgs = response.body.message;
+         }
+       })
+     },
    },
    components: {
      slider,

@@ -4,7 +4,7 @@ class Tool {
     return Math.atan2(y, x);
   }
 
-  // 获取方// 向
+  // 获取方向
   // getPositon(angle) {
   //   const a = angle * 180 / Math.PI;
   //   if (a > 0 && a <= 90) {
@@ -20,7 +20,7 @@ class Tool {
 
   // 手指滑动rx:水平移动的速率
   isFling(rx, ry) {
-    if (rx > 0.4 || ry > 0.4) {
+    if (rx > 0.7 || ry > 0.7) {
       return true;
     } else {
       return false;
